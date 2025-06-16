@@ -8,7 +8,6 @@ if not openai.api_key:
     st.warning("Please enter your OpenAI API key to continue.")
     st.stop()
 
-st.set_page_config(page_title="Flashcard Generator", layout="wide")
 st.title("📚 LLM-Powered Flashcard Generator")
 
 input_method = st.radio("Choose Input Type", ["Upload File", "Paste Text"])
