@@ -33,14 +33,15 @@ if st.button("Generate Flashcards") and raw_text:
         )
         user_prompt = f"Content:\n{raw_text[:3000]}"  # Truncate for token limits
 
-        response = openai.ChatCompletion.create(
+        client = openai.OpenAI(api_key=openai.api_key)
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.7
-        )
+                ],
+                temperature=0.7
+            )
 
         output = response['choices'][0]['message']['content']
         st.markdown("### 🧠 Generated Flashcards")
