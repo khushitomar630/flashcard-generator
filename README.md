@@ -1,4 +1,4 @@
-# 📚 Flashcard Generator - AI Intern Task (ShelfEx)
+# 📚 Flashcard Generator - AI
 
 This project is a simple Streamlit app that uses OpenAI's GPT-3.5-Turbo to generate Q&A-style flashcards from educational content. Built as part of ShelfEx's AI Internship assignment.
 
