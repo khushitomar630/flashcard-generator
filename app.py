@@ -1,18 +1,23 @@
 import streamlit as st
 import openai
 from utils import read_pdf, read_txt
+from openai import OpenAI, RateLimitError
 
-openai.api_key = st.text_input("Enter your OpenAI API Key", type="password")
- # store your key in .streamlit/secrets.toml
-if not openai.api_key:
+st.set_page_config(page_title="Flashcard Generator", layout="wide")
+
+# Input for OpenAI key
+openai_key = st.text_input("Enter your OpenAI API Key", type="password")
+if not openai_key:
     st.warning("Please enter your OpenAI API key to continue.")
     st.stop()
 
+client = OpenAI(api_key=openai_key)
+
 st.title("📚 LLM-Powered Flashcard Generator")
 
+# Input method
 input_method = st.radio("Choose Input Type", ["Upload File", "Paste Text"])
 subject = st.selectbox("Select Subject (optional)", ["General", "Biology", "History", "CS", "Math"])
-
 raw_text = ""
 
 if input_method == "Upload File":
@@ -25,27 +30,32 @@ if input_method == "Upload File":
 else:
     raw_text = st.text_area("Paste your educational content here", height=300)
 
+# Generate button
 if st.button("Generate Flashcards") and raw_text:
     with st.spinner("Generating..."):
-        system_prompt = (
-            f"You are a helpful AI that generates flashcards from {subject} content. "
-            f"Provide a list of at least 10 Q&A flashcards based on the given content."
-        )
-        user_prompt = f"Content:\n{raw_text[:3000]}"  # Truncate for token limits
+        try:
+            system_prompt = (
+                f"You are a helpful AI that generates flashcards from {subject} content. "
+                f"Provide a list of at least 10 Q&A flashcards based on the given content."
+            )
+            user_prompt = f"Content:\n{raw_text[:3000]}"
 
-        client = openai.OpenAI(api_key=openai.api_key)
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
                 ],
                 temperature=0.7
             )
 
-        output = response['choices'][0]['message']['content']
-        st.markdown("### 🧠 Generated Flashcards")
-        st.text_area("Q&A Flashcards", value=output, height=400)
+            output = response.choices[0].message.content
+            st.markdown("### 🧠 Generated Flashcards")
+            st.text_area("Q&A Flashcards", value=output, height=400)
 
-        if st.download_button("Download as TXT", output, file_name="flashcards.txt"):
-            st.success("Download Ready!")
+            st.download_button("Download as TXT", output, file_name="flashcards.txt")
+
+        except RateLimitError:
+            st.error("❌ Rate limit reached. Please wait or use a different API key.")
+        except Exception as e:
+            st.error(f"⚠️ An error occurred: {e}")
