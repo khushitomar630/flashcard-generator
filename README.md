@@ -18,12 +18,3 @@ This project is a simple Streamlit app that uses OpenAI's GPT-3.5-Turbo to gener
 - Error handling for API key, limits, and empty input
 
 ---
-
-## 🧪 Sample Output
-
-```txt
-Q: What is Artificial Intelligence?
-A: Artificial Intelligence (AI) is the simulation of human intelligence in machines programmed to think, learn, and solve problems.
-
-Q: Name one use of AI in education.
-A: AI is used to personalize learning experiences and automate grading.
