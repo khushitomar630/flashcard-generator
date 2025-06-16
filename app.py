@@ -2,7 +2,11 @@ import streamlit as st
 import openai
 from utils import read_pdf, read_txt
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]  # store your key in .streamlit/secrets.toml
+openai.api_key = st.text_input("Enter your OpenAI API Key", type="password")
+ # store your key in .streamlit/secrets.toml
+if not openai.api_key:
+    st.warning("Please enter your OpenAI API key to continue.")
+    st.stop()
 
 st.set_page_config(page_title="Flashcard Generator", layout="wide")
 st.title("📚 LLM-Powered Flashcard Generator")
